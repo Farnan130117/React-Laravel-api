@@ -89,6 +89,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'User Logged In Successfully',
+                'user' => $user,
                 'token' => $user->createToken("API TOKEN")->plainTextToken
             ], 200);
 
@@ -99,5 +100,41 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
+    public function logoutUser(Request $request)
+{
+    
+    // try {
+    //     $user = $request->user();
+    //     $user->tokens()->delete();
+
+    //     return response()->json([
+    //         'status' => true,
+    //         'message' => 'User Logged Out Successfully'
+    //     ], 200);
+    // } catch (\Throwable $th) {
+    //     return response()->json([
+    //         'status' => false,
+    //         'message' => $th->getMessage()
+    //     ], 500);
+    // }
+    //dd(Auth::check());
+    if (Auth::check()){
+        $user = $request->user();
+        $user->tokens()->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'User Logged Out Successfully'
+        ], 200);
+    }
+    else{
+        return response()->json([
+            'status' => false,
+            'message' => "User not Authinticated"
+        ], 500);
+    }
+}
+
 
 }
