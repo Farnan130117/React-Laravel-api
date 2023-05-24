@@ -5,12 +5,52 @@ import Registration from './components/Registration';
 import Post from './components/Post';
 import EditPost from './components/EditPost';
 import AddPost from './components/AddPost';
+import  { useState } from 'react';
+import axios from 'axios';
 
 
 
 
 
 function App() {
+  // Check if token exists in session
+  const savedtoken = sessionStorage.getItem('token');
+  const showPostButton = !!savedtoken;
+
+  const [token, setToken] = useState(sessionStorage.getItem('token'));
+        const [user, setUser] = useState(null);
+        const [error, setError] = useState(null);
+        const [message, setMessage] = useState(null);
+
+  const handleLogout = () => {
+    // Get the token from sessionStorage
+    const token = sessionStorage.getItem('token');
+
+    // Make the logout API call
+    axios
+      .post('http://127.0.0.1:8000/api/auth/logout', null, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(response => {
+        // Handle successful logout
+        console.log(response.data.message);
+
+        // Clear session storage and reset state
+        sessionStorage.removeItem('token');
+        setToken(null);
+        setMessage(null);
+        setUser(null);
+        // Reload the page
+       window.location.reload();
+      })
+      .catch(error => {
+        // Handle logout error
+        console.error(error);
+      });
+  };
+  
   return (
     <>
       <BrowserRouter>
@@ -37,21 +77,32 @@ function App() {
                   Home <span className="sr-only">(current)</span>
                 </Link>
               </li>
+              {!showPostButton && (
               <li className="nav-item">
                 <Link className="nav-link" to="/login">
                   Login
                 </Link>
               </li>
+              )}
               <li className="nav-item">
                 <Link className="nav-link" to="/register">
                   Register
                 </Link>
               </li>
+              {showPostButton && (
               <li className="nav-item">
                 <Link className="nav-link" to="/posts">
                   Post
                 </Link>
               </li>
+              )}
+              {showPostButton && (
+              <li className="nav-item">
+              <Link className="nav-link" to="/">
+              <button onClick={handleLogout} className="btn btn-primary">Logout</button>
+              </Link>
+              </li>
+              )}
             </ul>
           </div>
         </nav>

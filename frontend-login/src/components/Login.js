@@ -1,5 +1,5 @@
 import React from 'react';
-import {Routes, Route, Link } from "react-router-dom";
+import {Routes, Route, Link, useNavigate } from "react-router-dom";
 import  { useState,useEffect } from 'react';
 import axios from 'axios';
 
@@ -10,6 +10,7 @@ export default function Login() {
         const [user, setUser] = useState(null);
         const [error, setError] = useState(null);
         const [message, setMessage] = useState(null);
+        const navigate = useNavigate();
         //Login Credential
         const [email, setEmail] = useState('');
         const [password, setPassword] = useState('');
@@ -40,6 +41,11 @@ export default function Login() {
             setToken(token);
             setMessage(message);
             setUser(user);
+            // Reload the page
+            // window.location.reload();
+             navigate("/");
+             window.location.reload();
+           
           } catch (error) {
             // Handle login error
             setError('Login failed. Please try again.');
@@ -66,6 +72,8 @@ export default function Login() {
               setToken(null);
               setMessage(null);
               setUser(null);
+              // Reload the page
+             window.location.reload();
             })
             .catch(error => {
               // Handle logout error
@@ -91,7 +99,8 @@ export default function Login() {
                 <button onClick={handleLogout}>Logout</button>
               </div>
             ) : (
-              <div className='container'>
+              <>
+              {/* <div className='container'>
                 <h2>Please log in to continue.</h2>
                 <div>
                   <label>Email</label>
@@ -110,7 +119,23 @@ export default function Login() {
                   />
                 </div>
                 <button onClick={handleLogin}>Login</button>
-              </div>
+              </div> */}
+              <div className='container'>
+                  <div className="form-group">
+                    <label >Email address</label>
+                    <input type="email" value={email} onChange={handleEmailChange} className="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email"/>
+                    <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
+                  </div>
+                  <div className="form-group">
+                    <label >Password</label>
+                    <input type="password" value={password} onChange={handlePasswordChange} className="form-control" id="password" placeholder="Password"/>
+                  </div>
+                  
+                  <button  onClick={handleLogin} className="btn btn-primary">Submit</button>
+                </div>
+
+                
+              </>
             )}
           </div>
           </>
